@@ -1,6 +1,7 @@
 <template>
     <div class="main-foodservice-product">
-        <v-data-table fixed-header height="42vh" :loading="loadingTable" :headers="headers" :items="products" :items-per-page="-1" hide-default-footer class="elevation-1"></v-data-table>
+        <h4>Produtos para Montagem</h4>
+        <v-data-table fixed-header height="90vh" :loading="loadingTable" :headers="headers" :items="products" :items-per-page="-1" hide-default-footer class="elevation-1"></v-data-table>
     </div>
 </template>
 

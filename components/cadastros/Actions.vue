@@ -1,6 +1,6 @@
 <template>
     <div class="main-foodservice-actions">
-        <v-card height="100%" class="d-flex justify-space-around align-center">
+        <v-card height="100%" class="d-flex flex-column justify-space-around align-center">
             <AddProduct @getProduct="$emit('getProduct')"></AddProduct>
             <AddProductStock @getProduct="$emit('getProduct')"></AddProductStock>
             <AddProductSale @getProductSale="$emit('getProductSale')"></AddProductSale>

@@ -1,5 +1,5 @@
 <template>
-    <div class="main-foodservice-sale">
+    <div class="main-caixa-ticket">
         <v-card min-height="100%" class="grid-sale">
             <v-card-title style="grid-area: title;">Caixa</v-card-title>
             <v-card-text style="grid-area: input;">
@@ -170,8 +170,8 @@ export default {
 </script>
 
 <style scoped>
-.main-foodservice-sale {
-    grid-area: sale;
+.main-caixa-ticket{
+    grid-area: caixa;
 
     padding: 1vh 0 0 1vh;
 }
