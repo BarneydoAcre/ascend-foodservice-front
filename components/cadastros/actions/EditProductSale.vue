@@ -105,7 +105,7 @@ export default {
             this.item["type"] = this.formProduct.type
         },
         async getProduct () {
-            const req = await fetch(process.env.HOST_BACK+'/sale/getProduct/?'+new URLSearchParams({
+            const req = await fetch(process.env.HOST_BACK+'/register/getProduct/?'+new URLSearchParams({
                 token: localStorage.getItem('refresh'),
                 company: localStorage.getItem('company'),
                 type: 1,
@@ -116,7 +116,7 @@ export default {
             this.products = res
         },
         async getProductItems () {
-            const req = await fetch(process.env.HOST_BACK+'/sale/getProductItems/?'+new URLSearchParams({
+            const req = await fetch(process.env.HOST_BACK+'/register/getProductItems/?'+new URLSearchParams({
                 token: localStorage.getItem('refresh'),
                 company: localStorage.getItem('company'),
                 type: 1,
@@ -128,7 +128,7 @@ export default {
             this.productsTable = res
         },
         async editProduct () {
-            const req = await fetch(process.env.HOST_BACK+'/sale/editProduct/?', {
+            const req = await fetch(process.env.HOST_BACK+'/register/editProduct/?', {
                 method: "POST",
                 body: JSON.stringify(this.item)
             })
@@ -137,7 +137,7 @@ export default {
             }
         },
         async addProductItems () {
-            const req = await fetch(process.env.HOST_BACK+'/sale/addProductItem/?', {
+            const req = await fetch(process.env.HOST_BACK+'/register/addProductItem/?', {
                 method: "POST",
                 body: JSON.stringify({
                     company: this.formProduct.company,
@@ -152,7 +152,7 @@ export default {
             }
         },
         async removeProductItems () {
-            const req = await fetch(process.env.HOST_BACK+'/sale/removeProductItems/?', {
+            const req = await fetch(process.env.HOST_BACK+'/register/removeProductItems/?', {
                 method: "POST",
                 body: JSON.stringify({
                     id: this.component,
