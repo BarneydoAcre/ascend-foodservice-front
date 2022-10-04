@@ -4,10 +4,10 @@
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-title class="text-h6">
-                        Application
+                        Empresa
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                        subtext
+                        {{ $route.params.company}}
                     </v-list-item-subtitle>
                 </v-list-item-content>
             </v-list-item>
