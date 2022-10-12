@@ -56,7 +56,7 @@ export default {
     }, 
     methods: {
         async getProduct () {
-            const req = await fetch(process.env.HOST_BACK+'/sale/getProduct/?'+new URLSearchParams({
+            const req = await fetch(process.env.HOST_BACK+'/register/getProduct/?'+new URLSearchParams({
                 token: localStorage.getItem('refresh'),
                 company: localStorage.getItem('company'),
                 type: 1,
@@ -67,7 +67,7 @@ export default {
             this.products = res
         },
         async addProductStock () {
-            const req = await fetch(process.env.HOST_BACK+"/sale/addProductStock/", {
+            const req = await fetch(process.env.HOST_BACK+"/register/addProductStock/", {
                 method: "POST",
                 body: JSON.stringify(this.form),
                 headers: { "Content-Type": "application/json" },

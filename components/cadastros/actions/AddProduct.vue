@@ -1,55 +1,44 @@
 <template>
-    <v-dialog v-model="dialog" max-width="85vw">
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn 
-            fab
-            small
-            color="primary" 
-            v-bind="attrs" 
-            v-on="on">
-                <v-icon>mdi-basket-plus</v-icon>
-            </v-btn>
-        </template>
-        <v-card>
-            <v-card-title>Novo Produto</v-card-title>
-            <v-card-text>
-                <v-form v-model="valid" ref="form" lazy-validation>
-                    <v-row dense>
-                        <v-col cols="8">
-                            <v-text-field dense filled label="Nome do Produto" v-model="form.name" :rules="rules"></v-text-field>
-                        </v-col>
-                        <v-col cols="3">
-                            <v-select dense filled label="Marca" @focus="getBrand" v-model="form.brand" :rules="rules" :items="brands" item-text="brand_name" item-value="brand_id"></v-select>
-                        </v-col>
-                        <v-col cols="1">
-                            <AddBrand @getBrand="getBrand"></AddBrand>
-                        </v-col>
-                        <v-col cols="3">
-                            <v-select dense filled label="Und. Medida" @focus="getMeasure" v-model="form.measure" :rules="rules" :items="measures" item-text="measure_name" item-value="measure_id"></v-select>
-                        </v-col>
-                        <v-col cols="1">
-                            <AddMeasure @getMeasure="getMeasure"></AddMeasure>
-                        </v-col>
-                        <v-col cols="4">
-                            <v-text-field dense filled label="Qtd. Atual" v-model="form.stock" :rules="rules"></v-text-field>
-                        </v-col>
-                        <v-col cols="4">
-                            <v-text-field dense filled label="Custo" v-model="form.cost" :rules="rules"></v-text-field>
-                        </v-col>
-                        <v-col cols="12" class="d-flex justify-center align-center">
-                            <v-btn color="success" class="mr-4" @click="addProduct">
-                                <v-icon>mdi-send</v-icon>Registrar
-                            </v-btn>
-                            <v-btn color="warning" @click="dialog = false">
-                                <v-icon>mdi-close</v-icon>Cancelar
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </v-form>
-            </v-card-text>
-        </v-card>
-    </v-dialog>
-  
+    <div>
+        <v-card-title>Criar um novo Produto</v-card-title>
+        <v-card-text>
+            <v-form v-model="valid" ref="form" lazy-validation>
+                <v-row dense>
+                    <v-col cols="8">
+                        <v-text-field dense filled label="Nome do Produto" v-model="form.name" :rules="rules"></v-text-field>
+                    </v-col>
+                    <v-col cols="3">
+                        <v-select dense filled label="Marca" @focus="getBrand" v-model="form.brand" :rules="rules" :items="brands" item-text="brand_name" item-value="brand_id"></v-select>
+                    </v-col>
+                    <v-col cols="1">
+                        <AddBrand @getBrand="getBrand"></AddBrand>
+                    </v-col>
+                    <v-col cols="3">
+                        <v-select dense filled label="Und. Medida" @focus="getMeasure" v-model="form.measure" :rules="rules" :items="measures" item-text="measure_name" item-value="measure_id"></v-select>
+                    </v-col>
+                    <v-col cols="1">
+                        <AddMeasure @getMeasure="getMeasure"></AddMeasure>
+                    </v-col>
+                    <v-col cols="3">
+                        <v-text-field dense filled label="Qtd. Atual" v-model="form.stock" :rules="rules"></v-text-field>
+                    </v-col>
+                    <v-col cols="23">
+                        <v-text-field dense filled label="Custo" v-model="form.cost" :rules="rules"></v-text-field>
+                    </v-col>
+                    <v-col cols="1" class="d-flex justify-center">
+                        <v-btn fab color="success" @click="addProduct">
+                            <v-icon>mdi-check</v-icon>
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="1" class="d-flex justify-center">
+                        <v-btn fab color="warning" @click="reset">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </v-form>
+        </v-card-text>
+    </div>
 </template>
 
 <script>

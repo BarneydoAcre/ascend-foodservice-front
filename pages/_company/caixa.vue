@@ -1,6 +1,6 @@
 <template>
     <div class="main-caixa">
-        <Ticket @getProduct="$refs.product.getProduct()"></Ticket>
+        <Ticket></Ticket>
     </div>
 </template>
 

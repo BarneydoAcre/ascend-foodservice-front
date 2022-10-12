@@ -4,8 +4,7 @@
             <v-card-title>Módulo Suporte</v-card-title>
             <v-card-text>
                 <v-list dense nav>
-                    <AddTicketStatus></AddTicketStatus>
-                    <AddRequestType></AddRequestType>
+                    <!-- aqui irá os botões -->
                 </v-list>
             </v-card-text>
         </v-card>
@@ -13,14 +12,8 @@
 </template>
 
 <script>
-import AddTicketStatus from './actions/AddTicketStatus.vue';
-import AddRequestType from './actions/AddRequestType.vue';
 export default {
     name: "Params",
-    components: {
-        AddTicketStatus ,
-        AddRequestType
-    }
 }
 </script>
 

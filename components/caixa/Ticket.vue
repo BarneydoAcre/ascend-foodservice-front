@@ -59,7 +59,6 @@
 import SelectSaleItem from './actions/SelectSaleItem.vue'
 export default {
     name: "Ticket",
-    emits: ['getProduct'],
     components: {
         SelectSaleItem
     },
@@ -162,7 +161,6 @@ export default {
             })
             if (req.status == 200) {
                 this.reset()
-                this.$emit('getProduct')
             }
         },
     }
