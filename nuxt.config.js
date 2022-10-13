@@ -7,8 +7,8 @@ export default {
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - helpdesk',
-    title: 'helpdesk',
+    titleTemplate: '%s - Ascend Project',
+    title: 'FoodService',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -48,10 +48,10 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    // https://go.nuxtjs.dev/axios
+    '@nuxtjs/axios',
     '@nuxtjs/dotenv',
   ],
   
@@ -76,9 +76,12 @@ export default {
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
+    icon: false,
     manifest: {
-      lang: 'en'
-    }
+      name: 'FoodService - Ascend Project',
+      lang: 'pt-br',
+      useWebmanifestExtension: false
+  }
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
