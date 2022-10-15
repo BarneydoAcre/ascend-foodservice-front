@@ -11,7 +11,8 @@
                             <v-expansion-panel-header class="d-flex justify-space-around">
                                 <div>Venda: {{ item.id }}</div>  
                                 <div>Valor: {{ item.value}}</div>  
-                                <div>Entrega: {{ item.delivery }}</div>  
+                                <div>Entrega: {{ item.delivery }}</div> 
+                                <div>Total: {{ item.value*item.delivery }}</div>  
                             </v-expansion-panel-header>
                             <v-expansion-panel-content
                             v-for="(salei,i) in saleItems.filter((i) => { return i.sale == item.id })"
