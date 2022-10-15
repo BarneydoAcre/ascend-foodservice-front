@@ -13,6 +13,16 @@
                                 <div>Valor: {{ item.value}}</div>  
                                 <div>Entrega: {{ item.delivery }}</div> 
                                 <div>Total: {{ item.value+item.delivery }}</div>  
+                                <div class="d-flex justify-center">
+                                    <v-btn
+                                        fab
+                                        small
+                                        color="primary"
+                                        :href="host+'/sale/print/'+item.id"
+                                        target="_blank">
+                                        <v-icon>mdi-printer</v-icon>
+                                    </v-btn> 
+                                </div>
                             </v-expansion-panel-header>
                             <v-expansion-panel-content
                             v-for="(salei,i) in saleItems.filter((i) => { return i.sale == item.id })"
@@ -44,6 +54,7 @@ export default {
     data () {
         return {
             loadingTableList: false,
+            host: process.env.HOST_BACK,
             headers: [
                 { text: "ID", align: "center", justify: "center", value: "id" },
                 { text: "Total", align: "center", justify: "center", value: "total" },
