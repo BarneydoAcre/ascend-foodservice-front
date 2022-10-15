@@ -102,6 +102,7 @@ export default {
         filterProduct () {
             if(this.product.name == null || this.product.name == '') {
                 this.filtered = this.products
+                this.dialog = true
             }else {
                 this.filtered = this.products.filter((i) => i.name.toLowerCase().includes(this.product.name.toLowerCase()))
                 if (this.filtered.length == 1) {
@@ -112,9 +113,11 @@ export default {
             }
         },
         setItem (id) {
-            this.product = this.products.filter((i) => {
+            let item = this.products.filter((i) => {
                 return i.id == id
             })[0]
+            this.product.id = item.id
+            this.product.name = item.name
             this.dialog = false
         }    
     }
