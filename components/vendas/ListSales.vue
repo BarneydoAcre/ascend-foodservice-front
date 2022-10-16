@@ -13,6 +13,7 @@
                                 <div>Valor: {{ item.value}}</div>  
                                 <div>Entrega: {{ item.delivery }}</div> 
                                 <div>Total: {{ item.value+item.delivery }}</div>  
+                                <div>Data: {{ item.date }}</div>  
                                 <div class="d-flex justify-center">
                                     <v-btn
                                         fab
@@ -21,6 +22,18 @@
                                         :href="host+'/sale/print/'+item.id"
                                         target="_blank">
                                         <v-icon>mdi-printer</v-icon>
+                                    </v-btn> 
+                                    <v-btn
+                                        fab
+                                        small
+                                        color="warning">
+                                        <v-icon>mdi-pencil</v-icon>
+                                    </v-btn> 
+                                    <v-btn
+                                        fab
+                                        small
+                                        color="error">
+                                        <v-icon>mdi-delete</v-icon>
                                     </v-btn> 
                                 </div>
                             </v-expansion-panel-header>
