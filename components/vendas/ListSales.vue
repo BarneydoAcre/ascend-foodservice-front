@@ -14,7 +14,7 @@
                                 <div>Entrega: {{ item.delivery }}</div> 
                                 <div>Total: {{ item.value+item.delivery }}</div>  
                                 <div>Data: {{ item.date }}</div>  
-                                <div class="d-flex justify-center">
+                                <div class="d-flex justify-space-around">
                                     <v-btn
                                         fab
                                         small
@@ -29,13 +29,9 @@
                                         color="warning">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn> 
-                                    <v-btn
-                                        fab
-                                        small
-                                        color="error"
-                                        @click="deleteSale(item.id)">
-                                        <v-icon>mdi-delete</v-icon>
-                                    </v-btn> 
+                                    <DeleteSaleNotification 
+                                    @getSale="$emit('getSale')"
+                                    :sale="item.id"></DeleteSaleNotification>
                                 </div>
                             </v-expansion-panel-header>
                             <v-expansion-panel-content
@@ -59,8 +55,9 @@
 </template>
 
 <script>
+import DeleteSaleNotification from './actions/DeleteSaleNotification.vue'
 export default {
-    name: 'ListSales',
+    name: "ListSales",
     props: [
         "sales",
         "saleItems",
@@ -68,8 +65,12 @@ export default {
     emits: [
         "getSale",
     ],
-    data () {
+    components: { 
+        DeleteSaleNotification ,
+    },
+    data() {
         return {
+            dialogDelSale: false,
             loadingTableList: false,
             host: process.env.HOST_BACK,
             headers: [
@@ -77,26 +78,8 @@ export default {
                 { text: "Total", align: "center", justify: "center", value: "total" },
                 { text: "Ações", align: "center", justify: "center", value: "actions" },
             ],
-
-        }
+        };
     },
-    methods: {
-        async deleteSale (id) {
-            let data = JSON.stringify({
-                company: localStorage.getItem("company"),
-                token: localStorage.getItem("refresh"),
-                sale: id,
-            })
-            const req = await fetch(process.env.HOST_BACK+'/sale/deleteSale/', {
-                method: "POST",
-                body: data,
-                headers: { "Content-Type": "application/json" },
-            })
-            if (req.status == 200) {
-                this.$emit('getSale')
-            }
-        }
-    }
 }
 </script>
 
