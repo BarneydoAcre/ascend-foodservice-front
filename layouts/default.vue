@@ -94,9 +94,9 @@ export default {
                 { title: "Dashboard (Em Breve)", icon: "mdi-view-dashboard", link: "dashboard/", disabled: false },
                 { title: "Caixa", icon: "mdi-point-of-sale", link: "caixa/", disabled: false },
                 { title: "Vendas", icon: "mdi-cash-plus", link: "vendas/", disabled: false },
-                { title: "Compras", icon: "mdi-cart-plus", link: "compras/", disabled: false },
-                { title: "Contas à Receber", icon: "mdi-bank-transfer-in", link: "contas-receber/", disabled: false },
-                { title: "Contas à Pagar", icon: "mdi-bank-transfer-out", link: "contas-pagar/", disabled: false },
+                { title: "Compras (Em Breve)", icon: "mdi-cart-plus", link: "compras/", disabled: false },
+                { title: "Contas à Receber (Em Breve)", icon: "mdi-bank-transfer-in", link: "contas-receber/", disabled: false },
+                { title: "Contas à Pagar (Em Breve)", icon: "mdi-bank-transfer-out", link: "contas-pagar/", disabled: false },
                 { title: "Cadastros", icon: "mdi-plus", link: "cadastros/", disabled: false },
                 { title: "Ajuda (Em Breve)", icon: "mdi-help-box", link: "help/", disabled: false },
             ],
@@ -107,7 +107,6 @@ export default {
             miniVariant: false,
             right: true,
             rightDrawer: false,
-            title: "Vuetify.js"
         };
     },
     mounted() {

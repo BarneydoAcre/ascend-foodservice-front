@@ -8,6 +8,7 @@
             </v-card>
         </div>
         <ListSales 
+        @getSale="getSale"
         :sales="filteredSales" 
         :saleItems="saleItems"></ListSales>
         <Actions></Actions>
@@ -34,7 +35,6 @@ export default {
     },
     mounted () {
         this.getSale()
-        this.getSaleItems()
         this.filterSales()
     },
     methods: {
@@ -49,6 +49,7 @@ export default {
             const res = await req.json()
 
             if (req.status == 200) {
+                this.getSaleItems()
                 this.sales = res
                 this.filteredSales = this.sales
             }

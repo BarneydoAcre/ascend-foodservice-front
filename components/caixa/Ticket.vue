@@ -45,8 +45,11 @@
             </v-card-text>
             <v-card-actions style="grid-area: info;">
                 <v-row dense class="d-flex align-center">
-                    <v-col cols="4">
-                        <v-text-field dense label="Valor Frete" type="number" v-model="form.delivery"></v-text-field>
+                    <v-col cols="2">
+                        <v-text-field dense filled label="Valor Frete" type="number" v-model="form.delivery"></v-text-field>
+                    </v-col>
+                    <v-col cols="2">
+                        <v-text-field dense filled disabled label="Total Venda" type="number" v-model="totalSale"></v-text-field>
                     </v-col>
                 </v-row>
             </v-card-actions>
@@ -65,6 +68,7 @@ export default {
     data () {
         return {
             sale_id: null,
+            totalSale: 0.0,
             host: process.env.HOST_BACK,
             valid: false,
             products: [],
@@ -92,6 +96,7 @@ export default {
                     value: "id"
                 },
                 { text: "Produto", value: "name" },
+                { text: "Preço", value: "price" },
                 { text: "Qtde.", value: "quantity" },
                 { text: "Ações", value: "actions" },
             ],
@@ -113,6 +118,7 @@ export default {
         reset () {
             this.$refs.form.reset()
             this.formItems.products = []
+            this.totalSale = 0.0
         },
         addItem () {
             let objItem = {
@@ -128,6 +134,8 @@ export default {
                 objItem["price"] = product.price
                 objItem["quantity"] = this.quantity
                 this.formItems.products.push(objItem)
+
+                this.totalSale += parseFloat(product.price)*parseFloat(this.quantity)
             }
         },
         delItem (item) {

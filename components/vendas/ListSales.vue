@@ -32,7 +32,8 @@
                                     <v-btn
                                         fab
                                         small
-                                        color="error">
+                                        color="error"
+                                        @click="deleteSale(item.id)">
                                         <v-icon>mdi-delete</v-icon>
                                     </v-btn> 
                                 </div>
@@ -64,6 +65,9 @@ export default {
         "sales",
         "saleItems",
     ],
+    emits: [
+        "getSale",
+    ],
     data () {
         return {
             loadingTableList: false,
@@ -76,7 +80,23 @@ export default {
 
         }
     },
-
+    methods: {
+        async deleteSale (id) {
+            let data = JSON.stringify({
+                company: localStorage.getItem("company"),
+                token: localStorage.getItem("refresh"),
+                sale: id,
+            })
+            const req = await fetch(process.env.HOST_BACK+'/sale/deleteSale/', {
+                method: "POST",
+                body: data,
+                headers: { "Content-Type": "application/json" },
+            })
+            if (req.status == 200) {
+                this.$emit('getSale')
+            }
+        }
+    }
 }
 </script>
 
