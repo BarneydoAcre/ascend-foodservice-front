@@ -6,6 +6,7 @@
                 <v-list dense nav>
                     <Product></Product>
                     <ProductSale></ProductSale>
+                    <Customer></Customer>
                 </v-list>
             </v-card-text>
         </v-card>
@@ -15,11 +16,13 @@
 <script>
 import Product from "../../components/cadastros/Product.vue";
 import ProductSale from "../../components/cadastros/ProductSale.vue";
+import Customer from "../../components/cadastros/Customer.vue";
 export default {
     name: "cadastros",
     components: {
         Product,
         ProductSale,
+        Customer
     },
 }
 </script>

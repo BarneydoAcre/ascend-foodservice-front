@@ -20,7 +20,7 @@
             <v-card-text style="grid-area: table;">
                 <v-data-table :headers="headers" :items="formItems.products" :items-per-page="-1" hide-default-footer class="elevation-1">
                     <template v-slot:item.actions="{ item }">
-                        <v-icon small class="mr-2" @click="formItems.products = formItems.products.filter((i) => { return i.id != item.id })">mdi-delete</v-icon>
+                        <v-icon small class="mr-2" @click="delItem(item)">mdi-delete</v-icon>
                     </template>
                 </v-data-table>
             </v-card-text>
@@ -75,6 +75,7 @@ export default {
             product: null,
             quantity: null,
             loadingSelect: false,
+            loadingTable: false,
             form: {
                 company: localStorage.getItem("company"),
                 company_worker: localStorage.getItem("user_id"),
@@ -139,7 +140,8 @@ export default {
             }
         },
         delItem (item) {
-            this.formItems.products = this.formItems.products.filter((i) => {return i.id != item.id}).length == 0
+            this.formItems.products = this.formItems.products.filter((i) => { return i.id != item.id })
+            this.totalSale -= parseFloat(item.price)*parseFloat(item.quantity)
         },
         async addSale () {
             for (let i = 0; this.formItems.products.length > i; i++) {

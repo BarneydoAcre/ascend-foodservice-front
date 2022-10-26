@@ -4,7 +4,6 @@
             <v-card-title>Módulo Suporte</v-card-title>
             <v-card-text>
                 <v-list dense nav>
-                    <!-- aqui irá os botões -->
                 </v-list>
             </v-card-text>
         </v-card>
