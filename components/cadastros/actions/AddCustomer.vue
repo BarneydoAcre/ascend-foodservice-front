@@ -29,9 +29,9 @@
                     <v-card class="mb-12" height="58vh">
                         <v-card-text>
                             <v-form v-model="validForm" ref="form" lazy-validation>
-                                <v-row v-if="form.person_f_j">
+                                <v-row dense v-if="form.person_f_j">
                                     <v-col cols="6">
-                                        <v-switch v-model="form.f_j" label="Física/Jurídica"></v-switch>
+                                        <v-switch v-model="form.person_f_j" label="Física/Jurídica"></v-switch>
                                     </v-col>
                                     <v-col cols="6" class="d-flex justify-space-around">
                                         <v-checkbox v-model="form.type_client" label="Cliente"></v-checkbox>
@@ -51,7 +51,7 @@
                                         <v-text-field filled dense counter="20" :rules="ruleData" v-model="form.ie" label="IE"></v-text-field>
                                     </v-col>
                                     <v-col cols="6">
-                                        <v-text-field filled dense counter="50" :rules="ruleName" v-model="form.email" label="Email"></v-text-field>
+                                        <v-text-field filled dense counter="50" v-model="form.email" label="Email"></v-text-field>
                                     </v-col>
                                     <v-col cols="2">
                                         <v-text-field filled dense counter="20" :rules="ruleData" v-model="form.phone_number" label="Contato"></v-text-field>
@@ -71,7 +71,7 @@
                                 </v-row>
                                 <v-row dense v-else>
                                     <v-col cols="6">
-                                        <v-switch v-model="form.f_j" label="Física/Jurídica"></v-switch>
+                                        <v-switch v-model="form.person_f_j" label="Física/Jurídica"></v-switch>
                                     </v-col>
                                     <v-col cols="6" class="d-flex justify-space-around">
                                         <v-checkbox v-model="form.type_client" label="Cliente"></v-checkbox>
@@ -85,32 +85,32 @@
                                         <v-text-field filled dense counter="50" :rules="ruleName" v-model="form.fantasy" label="Apelido"></v-text-field>
                                     </v-col>
                                     <v-col cols="2">
-                                        <v-text-field filled counter="20" dense :rules="ruleData" v-model="form.cpf" label="CPF"></v-text-field>
+                                        <v-text-field filled counter="20" dense v-model="form.cpf" label="CPF"></v-text-field>
                                     </v-col>
                                     <v-col cols="2">
-                                        <v-text-field filled counter="20" dense :rules="ruleData" v-model="form.rg" label="RG"></v-text-field>
+                                        <v-text-field filled counter="20" dense v-model="form.rg" label="RG"></v-text-field>
                                     </v-col>
                                     <v-col cols="2">
-                                        <v-text-field filled dense counter="20" :rules="ruleData" v-model="form.phone_number" label="Contato"></v-text-field>
+                                        <v-text-field filled dense counter="20" v-model="form.phone_number" label="Contato"></v-text-field>
                                     </v-col>
                                     <v-col cols="4">
-                                        <v-text-field filled dense counter="50" :rules="ruleName" v-model="form.email" label="Email"></v-text-field>
+                                        <v-text-field filled dense counter="50" v-model="form.email" label="Email"></v-text-field>
                                     </v-col>
                                     <v-col cols="2">
-                                        <v-text-field append-icon="mdi-plus" filled dense counter="8" :rules="ruleCep" v-model="form.cep" label="CEP"></v-text-field>
+                                        <v-text-field append-icon="mdi-plus" filled dense counter="8" v-model="form.cep" label="CEP"></v-text-field>
                                     </v-col>
                                     <v-col cols="4">
-                                        <v-text-field filled dense counter="50" :rules="ruleName" v-model="form.street" label="Rua"></v-text-field>
+                                        <v-text-field filled dense counter="50" label="Rua"></v-text-field>
                                     </v-col>
                                     <v-col cols="1">
-                                        <v-text-field filled dense counter="5" :rules="ruleNum" v-model="form.num" label="Nº"></v-text-field>
+                                        <v-text-field filled dense counter="5" label="Nº"></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
-                                        <v-text-field filled dense counter="50" :rules="ruleName" v-model="form.district" label="Bairro"></v-text-field>
+                                        <v-text-field filled dense counter="50" label="Bairro"></v-text-field>
                                     </v-col>
                                     <v-col cols="3"
                                     color="primary">
-                                        <v-text-field dense filled :loading="loadingSelect" @click="getCities" @keydown.enter="filterCity" label="Cidade" v-model="form.city.name" :rules="rules"></v-text-field>
+                                        <v-text-field dense filled :loading="loadingSelect" @click="getCities" @keydown.enter="filterCity" label="Cidade" v-model="form.city.name"></v-text-field>
                                     </v-col>
                                     <v-dialog v-model="dialogCity" max-width="45vw">
                                         <v-card>
@@ -280,6 +280,7 @@ export default {
             if (req.status == 200) {
                 this.dialog = false
                 this.e1 += 1
+                this.form.city = { id: null, name: null }
                 this.$emit("getPartner")
             }
         },
