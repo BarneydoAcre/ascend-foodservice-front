@@ -64,7 +64,7 @@
                 <form id="company-form" class="modal">
                     <p class="form-title" style="text-align: center;">Escolha sua empresa!</p>
                     <div class="select-company">
-                        <v-btn v-for="d,i in companys" :key="i" :href="'/'+d.slug+'/dashboard/'" @click="setCompany(d.company_id)">{{ d.company}}</v-btn>
+                        <v-btn v-for="d,i in companys" :key="i" :href="'/'+d.slug+'/dashboard/'" @click="setCompany(d.company_id, d.worker_id)">{{ d.company}}</v-btn>
                     </div>
                 </form>
                 
@@ -171,8 +171,9 @@ export default {
             const res = await req.json()
             this.companys = res
         },
-        setCompany (id) {
-            localStorage.setItem('company', id)
+        setCompany (company, worker) {
+            localStorage.setItem('company', company)
+            localStorage.setItem('user_id', worker)
         }
     },
     mounted () {
