@@ -7,6 +7,7 @@
                     <Product></Product>
                     <ProductSale></ProductSale>
                     <Customer></Customer>
+                    <Campaign></Campaign>
                 </v-list>
             </v-card-text>
         </v-card>
@@ -17,12 +18,14 @@
 import Product from "../../components/cadastros/Product.vue";
 import ProductSale from "../../components/cadastros/ProductSale.vue";
 import Customer from "../../components/cadastros/Customer.vue";
+import Campaign from "../../components/cadastros/Campaign.vue";
 export default {
     name: "cadastros",
     components: {
         Product,
         ProductSale,
-        Customer
+        Customer,
+        Campaign
     },
 }
 </script>

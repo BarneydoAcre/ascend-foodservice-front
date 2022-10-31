@@ -29,12 +29,10 @@
 </template>
 
 <script>
-import EditProduct from "./actions/EditProduct.vue";
 import AddProduct from "./actions/AddProduct.vue";
 export default {
     name: "Product",
     components: {
-        EditProduct,
         AddProduct
     },
     data () {
