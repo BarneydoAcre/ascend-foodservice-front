@@ -5,7 +5,8 @@
             color="primary"
             v-bind="attrs" 
             v-on="on" 
-            @click="getCampaign">
+            @click="getCampaign"
+            :disabled="disabled">
                 <v-list-item-icon>
                     <v-icon>mdi-plus</v-icon>
                 </v-list-item-icon>
@@ -38,6 +39,7 @@
 import AddCampaign from "./actions/AddCampaign.vue";
 export default {
     name: "Campaign",
+    props: ["disabled"],
     components: {
         AddCampaign
     },

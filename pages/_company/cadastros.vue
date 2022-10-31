@@ -6,8 +6,8 @@
                 <v-list dense nav>
                     <Product></Product>
                     <ProductSale></ProductSale>
-                    <Customer></Customer>
-                    <Campaign></Campaign>
+                    <Customer :disabled="false"></Customer>
+                    <Campaign :disabled="true"></Campaign>
                 </v-list>
             </v-card-text>
         </v-card>

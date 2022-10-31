@@ -153,6 +153,7 @@ export default {
                 headers: { "Content-Type": "application/json"}
             })
             const res = await req.json()
+            console.log(res)
             if (req.status == 200) {
                 this.editItem["product_sale"] = res
                 this.addProductSaleItems()

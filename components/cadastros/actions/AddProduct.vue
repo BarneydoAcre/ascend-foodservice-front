@@ -87,6 +87,7 @@ export default {
         addProduct() {
             this.validate();
             setTimeout(async () => {
+                console.log(this.form)
                 if (this.valid != false) {
                     const req = await fetch(process.env.HOST_BACK + "/register/addProduct/", {
                         method: "POST",
