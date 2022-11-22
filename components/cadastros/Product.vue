@@ -16,10 +16,11 @@
         </template>
         <v-card>
             <v-card-text>
-                <AddProduct @getProduct="getProduct"></AddProduct>
+                <AddProduct ref="addProduct" @getProduct="getProduct" @reset="reset" :form="form" :edit="edit"></AddProduct>
                 <v-card-title>Editar produtos cadastrados</v-card-title>
                 <v-data-table fixed-header dense height="37vh" :loading="loadingTable" :headers="headers" :items="products" :items-per-page="-1" hide-default-footer>
                     <template v-slot:item.actions="{ item }">
+                        <v-icon small @click="editProduct(item)">mdi-pencil</v-icon>
                         <v-icon small @click="deleteProduct(item)">mdi-delete</v-icon>
                     </template>
                 </v-data-table>
@@ -38,6 +39,19 @@ export default {
     data () {
         return {
             loadingTable: false,
+            edit: false,
+            form: {
+                company: localStorage.getItem("company"),
+                company_worker: localStorage.getItem("user_id"),
+                token: localStorage.getItem("refresh"),
+                type: 1,
+                id: null,
+                name: null,
+                brand: null,
+                measure: null,
+                stock: null,
+                cost: null,
+            },
             products: [],
             headers: [
                 { text: 'ID', justify: 'center', align: 'center', value: 'id' },
@@ -50,7 +64,20 @@ export default {
         }
     },
     methods: {
-        editProduct () {
+        editProduct (i) {
+            let prod = this.products.filter((p) => { return p.id == i.id })[0]
+
+            this.form.id = prod.id
+            this.form.name = prod.name
+            this.form.brand = parseInt(prod.brand_id)
+            this.form.measure = parseInt(prod.measure_id)
+            this.form.stock = prod.stock
+            this.form.cost = prod.cost
+            
+            this.edit = true
+        },
+        reset () {
+            this.edit = false
         },
         async getProduct () {
             this.loadingTable = true

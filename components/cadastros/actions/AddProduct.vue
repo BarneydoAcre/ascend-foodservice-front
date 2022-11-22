@@ -25,9 +25,14 @@
                     <v-col cols="23">
                         <v-text-field dense filled label="Custo" v-model="form.cost" :rules="rules"></v-text-field>
                     </v-col>
-                    <v-col cols="1" class="d-flex justify-center">
+                    <v-col v-if="!edit" cols="1" class="d-flex justify-center">
                         <v-btn fab color="success" @click="addProduct">
                             <v-icon>mdi-check</v-icon>
+                        </v-btn>
+                    </v-col>
+                    <v-col v-else cols="1" class="d-flex justify-center">
+                        <v-btn fab color="primary" @click="editProduct">
+                            <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                     </v-col>
                     <v-col cols="1" class="d-flex justify-center">
@@ -50,21 +55,12 @@ export default {
     AddBrand,
     AddMeasure
 },
-    emits: ["getProduct"],
+    emits: ["getProduct", "reset"],
+    props: ['form', 'edit'],
     data() {
         return {
             dialog: false,
             valid: false,
-            form: {
-                company: localStorage.getItem("company"),
-                company_worker: localStorage.getItem("user_id"),
-                type: 1,
-                name: null,
-                brand: null,
-                measure: null,
-                stock: null,
-                cost: null,
-            },
             rules: [
                 v => !!v || "Obrigatório",
             ],
@@ -73,21 +69,20 @@ export default {
         };
     },
     mounted() {
+        this.getBrand()
+        this.getMeasure()
     },
     methods: {
-        reset() {
-            this.$refs.form.reset();
-        },
         validate() {
             this.$refs.form.validate();
         },
         reset () {
+            this.$emit('reset')
             this.$refs.form.reset();
         },
         addProduct() {
             this.validate();
             setTimeout(async () => {
-                console.log(this.form)
                 if (this.valid != false) {
                     const req = await fetch(process.env.HOST_BACK + "/register/addProduct/", {
                         method: "POST",
@@ -103,6 +98,16 @@ export default {
                     }
                 }
             }, 0);
+        },
+        async editProduct () {
+            const req = await fetch(process.env.HOST_BACK+'/register/editProduct/', {
+                method: 'POST',
+                body: JSON.stringify(this.form),
+                headers: { "Content-Type": "application/json" },
+            })
+            if (req.status == 200) {
+                this.$emit("getProduct")
+            }
         },
         async getBrand() {
             const req = await fetch(process.env.HOST_BACK + "/register/getBrand/?" + new URLSearchParams({
