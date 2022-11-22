@@ -15,6 +15,7 @@
 
                 <form id="login-form" class="modal">
                     <p class="form-title">Bem vindo ao Helpdesk</p>
+                    <h6 v-show="messageLogin" class="form-title">{{ messageLogin }}</h6>
                     <div class="input-field">
                         <label for="">Email</label>
                         <input type="email" style="background: #d8d8d8;" v-model="formLogin.email">
@@ -82,6 +83,7 @@ export default {
     data () {
         return {
             valid: false,
+            messageLogin: null,
             messageRegister: null,
             companys: [],
             statusLogin: false,
@@ -121,14 +123,13 @@ export default {
         
         async login(e) {
             e.preventDefault()
-            // const req = await fetch(process.env.HOST_BACK+'/jwt/create/', {
             const req = await fetch(process.env.HOST_BACK+'/default/auth/login/', {
                 method: 'POST',
                 body: JSON.stringify(this.formLogin),
                 headers: {'Content-Type': 'application/json'}
             })
-            const res = await req.json()
             if (req.status == '200') {
+                const res = await req.json()
                 localStorage.setItem('access', res.login_token.access)
                 localStorage.setItem('refresh', res.login_token.refresh)
                 localStorage.setItem('user_id', res.user_id)              
@@ -139,8 +140,9 @@ export default {
                 this.verifyLogin()
                 window.location.href = ('/#company-form')
             }else {
-                this.validLogin = true;
+                this.validLogin = false;
                 this.password = ''
+                this.messageLogin = 'Dados informados incorretos!'
             }
         },
         async register () {
@@ -165,11 +167,13 @@ export default {
         },
         async getCompany () {
             let email = localStorage.getItem('email')
-            const req = await fetch(process.env.HOST_BACK+'/default/getCompany/?email='+email+'&key=8168', {
+            const req = await fetch(process.env.HOST_BACK+'/default/getCompany/?email='+email+'&token='+localStorage.getItem('refresh'), {
                 method: 'GET'
             })
-            const res = await req.json()
-            this.companys = res
+            if (req.status == '200') {
+                const res = await req.json()
+                this.companys = res
+            }
         },
         setCompany (company, worker) {
             localStorage.setItem('company', company)

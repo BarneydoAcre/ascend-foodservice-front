@@ -111,8 +111,10 @@ export default {
             }), {
                 method: "GET",
             });
-            const res = await req.json();
-            this.brands = res;
+            if (req.status == 200) {
+                const res = await req.json();
+                this.brands = res;
+            }
         },
         async getMeasure() {
             const req = await fetch(process.env.HOST_BACK + "/register/getMeasure/?" + new URLSearchParams({
@@ -121,8 +123,10 @@ export default {
             }), {
                 method: "GET",
             });
-            const res = await req.json();
-            this.measures = res;
+            if (req.status == 200) {
+                const res = await req.json();
+                this.measures = res;
+            }
         }
     },
 }

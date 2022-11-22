@@ -79,8 +79,8 @@ export default {
             }),{
                 method: "GET",
             })
-            const res = await req.json()
             if (req.status == 200) {
+                const res = await req.json()
                 this.editItem["items"] = res
                 this.loadingTableItems = false
             }
@@ -112,8 +112,8 @@ export default {
             }), {
                 method: "GET",
             })
-            const res = await req.json()
             if (req.status == 200) {
+                const res = await req.json()
                 this.prodSale = res
                 this.loadingTableList = false
             }
@@ -127,9 +127,11 @@ export default {
             }), {
                 method: "GET",
             })
-            const res = await req.json()
-            this.prod = res
-            this.loadingTableItems = false
+            if (req.status == 200) {
+                const res = await req.json()
+                this.prod = res
+                this.loadingTableItems = false
+            }
         },
     }
 }
