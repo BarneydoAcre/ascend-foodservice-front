@@ -2,10 +2,10 @@
     <div class="content">
         <v-card height="100%" class="d-flex flex-column justify-space-around align-center">
             <v-card-text class="d-flex flex-column justify-center align-center">
-                <p class="content-title">Title</p>
-                <p class="content-text">Text</p>
+                <p class="content-title">Bem Vindo a CloudSys!</p>
+                <p class="content-text"></p>
             </v-card-text>
-            <v-btn>Botão do Deuses</v-btn>
+            <v-btn :to="'/team/'"></v-btn>
         </v-card>
     </div>
 </template>

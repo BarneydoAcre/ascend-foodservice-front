@@ -1,23 +1,19 @@
 <template>
     <v-dialog v-model="dialog" max-width="45vw">
         <template v-slot:activator="{ on, attrs }">
-            <v-col cols="3"
+            <div 
             color="primary" 
-            v-bind="attrs"
-            v-on="on">
-                <v-text-field dense filled :loading="loadingSelect" @click="getCities" @keydown.enter="filterCity" label="Prato" v-model="city.name" :rules="rules"></v-text-field>
-            </v-col>
+            v-bind="attrs">
+                <v-text-field dense filled :loading="loadingSelect" @click="getPartner" @keydown.enter="filterPartner" label="Parceiro" v-model="partner.name" :rules="rules"></v-text-field>
+            </div>
         </template>
         <v-card>
-            <v-card-title>Componentes do Produto</v-card-title>
+            <v-card-title>Parceiros</v-card-title>
             <v-card-text>
                 <v-form v-model="valid" ref="form" lazy-validation>
                     <v-row dense>
                         <v-col cols="12">
-                            <h3>Prato</h3>
-                        </v-col>
-                        <v-col cols="12">
-                            <v-text-field dense filled label="Produto" v-model="city.name" @keyup="filterCity"></v-text-field>
+                            <v-text-field dense filled label="Digite o nome" v-model="partner.name" @keyup="filterPartner"></v-text-field>
                         </v-col>
                     </v-row>
                 </v-form>
@@ -41,13 +37,14 @@
 
 <script>
 export default {
-    name: "SelectCity",
-    props: ["city"],
+    name: "SelectPartner",
     data () {
         return {
             loadingSelect: false,
             valid: false,
-            cities: [],
+            partner: { id: null, name: null },
+            quantity: null,
+            partners: [],
             dialog: false,
             filtered: [],
             rules: [
@@ -60,39 +57,40 @@ export default {
                     justify: "center",
                     value: "id"
                 },
-                { text: "Produto", value: "name" },
-                { text: "Preço", value: "cep" },
+                { text: "Nome", value: "name" },
                 { text: "Ações", value: "actions" },
             ],
         }
     },
     mounted () {
-        this.getCities()
+        this.getPartner()
     },
     methods: {
         reset () {
             this.$refs.form.reset();
         },
-        async getCities() {
+        async getPartner() {
             this.loadingSelect = true
-            const req = await fetch(process.env.HOST_BACK+'/register/getCities/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company'),
+            const req = await fetch(process.env.HOST_BACK+'/register/getPartner/?'+new URLSearchParams({
+                'company': localStorage.getItem("company"),
+                'token': localStorage.getItem("refresh")
             }), {
                 method: "GET",
             })
+
             if (req.status == 200) {
+                console.log(this.partner)
                 const res = await req.json()
-                this.cities = res
+                this.partners = res
                 this.loadingSelect = false
             }
         },
-        filterCity () {
-            if(this.city.name == null || this.city.name == '') {
-                this.filtered = this.cities
+        filterPartner () {
+            if(this.partner.name == null || this.partner.name == '') {
+                this.filtered = this.partners
                 this.dialog = true
             }else {
-                this.filtered = this.cities.filter((i) => i.name.toLowerCase().includes(this.city.name.toLowerCase()))
+                this.filtered = this.partners.filter((i) => i.name.toLowerCase().includes(this.partner.name.toLowerCase()))
                 if (this.filtered.length == 1) {
                     this.setItem(this.filtered[0].id)
                 }else {
@@ -101,11 +99,11 @@ export default {
             }
         },
         setItem (id) {
-            let item = this.cities.filter((i) => {
+            let item = this.partners.filter((i) => {
                 return i.id == id
             })[0]
-            this.city.id = item.id
-            this.city.name = item.name
+            this.partner.id = item.id
+            this.partner.name = item.name
             this.dialog = false
         }    
     }
