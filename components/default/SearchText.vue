@@ -1,10 +1,10 @@
 <template>
     <v-dialog v-model="dialog" max-width="45vw">
-        <template v-slot:activator="{ on, attrs }">
+        <template v-slot:activator="{ attrs }">
             <div 
             color="primary" 
             v-bind="attrs">
-                <v-text-field dense filled :loading="loading" @keydown="$emit('getPartner')" @keydown.enter="filter" :label="subLabel" v-model="item.name" :rules="rules"></v-text-field>
+                <v-text-field dense filled :loading="loading" @keydown.enter="filter" :label="subLabel" v-model="item.name" :rules="rules"></v-text-field>
             </div>
         </template>
         <v-card>
@@ -80,6 +80,9 @@ export default {
         }
     },
     methods: {
+        getData () {
+            this.filter()
+        },
         filter () {
             if(this.item.name == null || this.item.name == '') {
                 this.filtered = this.items

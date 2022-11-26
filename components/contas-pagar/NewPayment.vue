@@ -5,7 +5,7 @@
             color="primary"
             v-bind="attrs" 
             v-on="on" 
-            @click="1">
+            @click="getPartner">
                 <v-list-item-icon>
                     <v-icon>mdi-plus</v-icon>
                 </v-list-item-icon>

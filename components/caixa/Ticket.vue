@@ -5,7 +5,9 @@
             <v-card-text style="grid-area: input;">
                 <v-form v-model="valid" ref="form" lazy-validation>
                     <v-row dense>
-                        <SelectSaleItem ref="selectedItem"></SelectSaleItem>
+                        <v-col cols="6">
+                            <SearchText ref="selectedItem" :loading="loadingSelect" :headers="headersItem" :items="products" :mainLabel="'Produtos'" :subLabel="'Produto'" />
+                        </v-col>
                         <v-col cols="3">
                             <v-text-field dense filled label="Qtde." v-model="quantity" :rules="rules" id="quantityField"></v-text-field>
                         </v-col>
@@ -59,11 +61,11 @@
 </template>
 
 <script>
-import SelectSaleItem from './actions/SelectSaleItem.vue'
+import SearchText from '../default/SearchText.vue'
 export default {
     name: "Ticket",
     components: {
-        SelectSaleItem
+        SearchText
     },
     data () {
         return {
@@ -89,6 +91,17 @@ export default {
                 sale: null,
                 products: [],
             },
+            headersItem: [
+                { 
+                    text: "ID",
+                    align: "center",
+                    justify: "center",
+                    value: "id"
+                },
+                { text: "Produto", value: "name" },
+                { text: "Preço", value: "price" },
+                { text: "Ações", value: "actions" },
+            ],
             headers: [
                 { 
                     text: "ID",
@@ -105,6 +118,9 @@ export default {
                 v => !!v || "Obrigatório",
             ],
         }
+    },
+    mounted () {
+        this.getProduct()
     },
     methods: {
         validate() {
@@ -128,8 +144,9 @@ export default {
                 price: null,
                 quantity: null,
             }
-            if (this.formItems.products.filter((i) => {return i.id == this.$refs.selectedItem.product.id}).length == 0) {
-                let product = this.$refs.selectedItem.products.filter((i) => {return i.id == this.$refs.selectedItem.product.id})[0]
+            console.log(this.$refs.selectedItem.item)
+            if (this.formItems.products.filter((i) => {return i.id == this.$refs.selectedItem.item.id}).length == 0) {
+                let product = this.$refs.selectedItem.items.filter((i) => {return i.id == this.$refs.selectedItem.item.id})[0]
                 objItem["id"] = product.id
                 objItem["name"] = product.name
                 objItem["price"] = product.price
@@ -172,6 +189,19 @@ export default {
             if (req.status == 200) {
                 this.reset()
             }
+        },
+        async getProduct () {
+            this.loadingSelect = true
+            const req = await fetch(process.env.HOST_BACK+'/register/getProduct/?'+new URLSearchParams({
+                token: localStorage.getItem('refresh'),
+                company: localStorage.getItem('company'),
+                type: 2,
+            }), {
+                method: "GET",
+            })
+            const res = await req.json()
+            this.products = res
+            this.loadingSelect = false
         },
     }
 }
