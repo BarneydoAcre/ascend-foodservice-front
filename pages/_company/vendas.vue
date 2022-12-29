@@ -9,8 +9,7 @@
         </div>
         <ListSales 
         @getSale="getSale"
-        :sales="filteredSales" 
-        :saleItems="saleItems"></ListSales>
+        :sales="filteredSales"></ListSales>
         <Actions></Actions>
     </div>
 </template>
@@ -29,7 +28,6 @@ export default {
     data () {
         return {
             sales: [],
-            saleItems: [],
             filteredSales: [],
         }
     },
@@ -39,33 +37,20 @@ export default {
     },
     methods: {
         async getSale() {
-            const req = await fetch(process.env.HOST_BACK+'/sale/getSale/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company'),
-                company_worker: localStorage.getItem('user_id'),
+            const req = await fetch(process.env.HOST_BACK+'/sale/?'+new URLSearchParams({
+                company: this.$route.params.company,
+                // company_worker: localStorage.getItem('user_id'),
             }),{
                 method: "GET",
+                headers: new Headers({
+                    "Authorization": "Token "+localStorage.getItem('token'),
+                })
             })
-            const res = await req.json()
-
+            
             if (req.status == 200) {
-                this.getSaleItems()
+                const res = await req.json()
                 this.sales = res
                 this.filteredSales = this.sales
-            }
-        },
-        async getSaleItems() {
-            const req = await fetch(process.env.HOST_BACK+'/sale/getSaleItems/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company'),
-                company_worker: localStorage.getItem('user_id'),
-            }),{
-                method: "GET",
-            })
-            const res = await req.json()
-
-            if (req.status == 200) {
-                this.saleItems = res
             }
         },
         filterSales () {
@@ -80,10 +65,10 @@ export default {
                 var dateEnd = new Date(urlParams.get('date').split(',')[1])
             }
             this.filteredSales = sales.filter((i) => { 
-                let date = new Date(i.date)
+                let date = new Date(i.created.split(' ')[0])
                 let sale = urlParams.get('sale')
                 if (sale != 'null' && sale != '' && sale != null) {
-                    return (date >= dateStart && date <= dateEnd && i.id == sale)
+                    return (date >= dateStart && date <= dateEnd && i.sale == sale)
                 }else {
                     return (date >= dateStart && date <= dateEnd)                    
                 }

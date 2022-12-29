@@ -1,11 +1,10 @@
 <template>
-    <v-dialog>
+    <v-dialog max-width="75vw">
         <template v-slot:activator="{ attrs, on }">
             <v-list-item
             color="primary"
             v-bind="attrs" 
-            v-on="on" 
-            @click="getPartner">
+            v-on="on" >
                 <v-list-item-icon>
                     <v-icon>mdi-plus</v-icon>
                 </v-list-item-icon>
@@ -22,63 +21,91 @@
                 <v-form v-model="valid" ref="form" lazy-validationc>
                     <v-row dense>
                         <v-col cols="2">
-                            <DateField />
+                            <DateField ref="dateEmit" :mainLabel="'Data Emissão'" @changeEmit="validDate" />
                         </v-col>
-                        <v-col cols="5">
-                            <SearchText :headers="headers" :items="items" 
-                            :loading="loadingSelect" :mainLabel="'Parceiros'"
-                            :subLabel="'Parceiro'"  
-                            @getPartner="getPartner" />
+                        <v-col cols="2">
+                            <DateField ref="dateDigi" :mainLabel="'Data Digitação'" @changeEmit="validDate" />
+                        </v-col>
+                        <Partner ref="partner" cols="5" />
+                        <Expense ref="expense" cols="3"/>
+                        <PaymentForm :cols="3" />
+                        <PaymentCondition :cols="3" />
+                        <v-col cols="2">
+                            <v-text-field filled dense label="Valor" type="number"></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <DateField ref="dateParc" :mainLabel="'1ª parcela em'" :prepend-icon="''" />
+                        </v-col>
+                        <v-col cols="2" class="d-flex justify-space-around">
+                            <v-btn
+                            color="primary"
+                            fab
+                            @click="setForm">
+                                <v-icon>mdi-plus</v-icon>
+                            </v-btn>
+                            <v-btn
+                            color="success"
+                            fab>
+                                <v-icon>mdi-check</v-icon>
+                            </v-btn>
                         </v-col>
                     </v-row>
                 </v-form>
+                <v-data-table dense 
+                :headers="[
+                    { text: 'Parcelas', align: 'center', justify: 'center', value: 'parcelas' },
+                    { text: 'Nome', value: 'name' },
+                    { text: 'Ações', value: 'actions' },
+                ]" 
+                hide-default-footer fixed-header :items-per-page="-1"></v-data-table>
             </v-card-text>
         </v-card>
+        <v-alert v-if="messageError" dismissible color="red">{{ messageError }}</v-alert>
     </v-dialog>
 </template>
 
 <script>
-import SelectPartner from './actions/SelectPartner.vue';
 import DateField from '../default/DateField.vue';
 import SearchText from '../default/SearchText.vue';
+import PaymentCondition from './actions/PaymentCondition.vue';
+import PaymentForm from './actions/PaymentForm.vue';
+import Expense from './actions/Expense.vue';
+import Partner from './actions/Partner.vue';
 export default {
     name: 'NewPayment',
     data: () => ({
         valid: false,
         activePicker: null,
-        loadingSelect: false,
         date: null,
         menu: false,
-        items: [],
-        headers: [
-            { 
-                text: "ID",
-                align: "center",
-                justify: "center",
-                value: "id"
-            },
-            { text: "Nome", value: "name" },
-            { text: "Ações", value: "actions" },
-        ],
+
+        messageError: null,
+        form: {},
     }),
     components: {
         SearchText,
-        SelectPartner,
-        DateField
+        DateField,
+        PaymentCondition,
+        PaymentForm,
+        Expense,
+        Partner
     },
     methods: {
-        async getPartner () {
-            this.loadingSelect = true
-            const req = await fetch(process.env.HOST_BACK+'/register/getPartner/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company')
-            }), {
-                method: 'GET'
-            })
-            if (req.status == 200) {
-                const res = await req.json()
-                this.items = res
-                this.loadingSelect = false
+        setForm () {
+            this.form = {
+                date_digi: this.$refs.dateDigi.date,
+                date_emit: this.$refs.dateEmit.date,
+                partner: this.$refs.partner.$refs.partner.item.id,
+                expense: this.$refs.expense.$refs.expense.item.id
+            }
+            console.log(this.form)
+            // console.log(this.$refs.partner.$refs.partner.item.id)
+        },
+        validDate () {
+            if (this.$refs.dateDigi.date < this.$refs.dateEmit.date) {
+                this.messageError = 'Data de emissão não pode ser maior que a data de digitação!'
+                this.$refs.dateDigi.date = null
+                this.$refs.dateEmit.date = null
             }
         }
     }

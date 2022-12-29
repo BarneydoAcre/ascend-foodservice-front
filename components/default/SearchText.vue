@@ -4,7 +4,7 @@
             <div 
             color="primary" 
             v-bind="attrs">
-                <v-text-field dense filled :loading="loading" @keydown.enter="filter" :label="subLabel" v-model="item.name" :rules="rules"></v-text-field>
+                <v-text-field dense filled :loading="loading" @focus="$emit('action')" @keydown.enter="filter" :label="subLabel" v-model="item.name" :rules="rules"></v-text-field>
             </div>
         </template>
         <v-card>
@@ -39,7 +39,7 @@
 <script>
 export default {
     name: 'SearchText',
-    emits: ['getPartner'],
+    emits: ['action'],
     props: {
         loading: {
             type: Boolean,
@@ -79,6 +79,8 @@ export default {
             ],
         }
     },
+    mounted() {
+    }, 
     methods: {
         getData () {
             this.filter()

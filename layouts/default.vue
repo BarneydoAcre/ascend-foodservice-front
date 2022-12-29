@@ -1,13 +1,13 @@
 <template>
     <v-app>
-        <v-navigation-drawer v-if="statusLogin == 2" permanent mini-variant expand-on-hover fixed app>
+        <v-navigation-drawer v-if="logged" permanent mini-variant expand-on-hover fixed app>
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-title class="text-h6">
-                        Empresa
+                        {{ user.username }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                        {{ $route.params.company}}
+                        {{ $route.params.company }}
                     </v-list-item-subtitle>
                 </v-list-item-content>
             </v-list-item>
@@ -65,12 +65,12 @@
                 </v-list>
             </template>
         </v-navigation-drawer>
-        <v-main v-if="statusLogin == 2">
+        <v-main v-if="logged">
             <v-container>
                 <Nuxt />
             </v-container>
         </v-main>
-        <Nuxt v-if="statusLogin == 1"/>
+        <Nuxt v-if="!logged && $route.path == '/'" />
         <v-speed-dial
         class="v-btn-fab"
         :transition="'scale-transition'">
@@ -100,7 +100,10 @@ export default {
                 { title: "Cadastros", icon: "mdi-plus", link: "cadastros/", disabled: false },
                 { title: "Ajuda (Em Breve)", icon: "mdi-help-box", link: "help/", disabled: true },
             ],
-            statusLogin: 0,
+            user: {
+                username: '',
+            },
+            logged: false,
             clipped: false,
             drawer: false,
             fixed: false,
@@ -109,41 +112,44 @@ export default {
             rightDrawer: false,
         };
     },
-    mounted() {
-        this.verifyLogin();
-    },
-    beforeCreate() {
+    mounted () {
         // this.$vuetify.theme.isDark = false;
+        this.user.username = localStorage.getItem('first_name')
+        this.verifyLogin()
+        // console.log(this.$route)
     },
     methods: {
         logout() {
-            localStorage.setItem("access", "");
-            localStorage.setItem("refresh", "");
-            localStorage.setItem("user_id", "");
-            localStorage.setItem("username", "");
-            localStorage.setItem("email", "");
-            localStorage.setItem("company", "");
-            this.statusLogin = 1;
-            this.verifyLogin();
+            localStorage.setItem("token", "")
+            localStorage.setItem('user_id', '')
+            localStorage.setItem('username', '')
+            localStorage.setItem('email', '')
+            localStorage.setItem('first_name', '')
+            localStorage.setItem('last_name', '')
+            this.logged = false;
+            this.verifyLogin()
         },
         async verifyLogin() {
-            let token = {
-                token: localStorage.getItem("refresh")
-            };
-            const req = await fetch(process.env.HOST_BACK+"/auth/jwt/verify/", {
-                method: "POST",
-                body: JSON.stringify(token),
-                headers: { "Content-Type": "application/json" }
-            });
-            const res = await req;
+            const req = await fetch(process.env.HOST_BACK+'/accounts/auth/', {
+                method: 'GET',
+                headers: new Headers({
+                    "Authorization": "Token "+localStorage.getItem("token")
+                })
+            })
             if (req.status == 200) {
-                this.statusLogin = 2;
+                const res = await req.json()
+                localStorage.setItem("token", res[0].key)
+                localStorage.setItem('user_id', res[0].user.id)
+                localStorage.setItem('username', res[0].user.username)
+                localStorage.setItem('email', res[0].user.email)
+                localStorage.setItem('first_name', res[0].user.first_name)
+                localStorage.setItem('last_name', res[0].user.last_name)
+                this.logged = true;
             }
-            else {
-                this.statusLogin = 1;
-                if (this.$route.path != "/") {
-                    window.location.href = process.env.HOST_FRONT;
-                }
+            if (req.status == 401 || req.status == 403 && window.location. href != process.env.HOST_FRONT+'/#login-form' && window.location. href != process.env.HOST_FRONT+'/#company-form') {
+                localStorage.clear()
+                this.logged = false;
+                window.location.href = process.env.HOST_FRONT
             }
         },
     },

@@ -84,7 +84,7 @@
             :items="editItem.items" 
             hide-default-footer>
                 <template v-slot:item.actions="{ item }">
-                    <v-icon small @click="editDelItem(item)">mdi-delete</v-icon>
+                    <v-icon small @click="editDelItem(item, editItem.id)">mdi-delete</v-icon>
                 </template>
             </v-data-table>
         </v-card-text>
@@ -141,37 +141,24 @@ export default {
             this.$emit('reset')
         },
         async addProductSale () {
-            const req = await fetch(process.env.HOST_BACK+"/register/addProduct/", {
+            const req = await fetch(process.env.HOST_BACK+"/product/?" + new URLSearchParams({
+                company: this.$route.params.company
+            }), {
                 method: "POST",
                 body: JSON.stringify({
-                    company: localStorage.getItem("company"),
-                    company_worker: localStorage.getItem("user_id"),
                     name: this.editItem.name,
                     price: this.editItem.price,
                     type: 2,
+                    products: this.editItem.items,
                 }),
-                headers: { "Content-Type": "application/json"}
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"
+                })
             })
-            if (req.status == 200) {
+            if (req.status == 201) {
                 const res = await req.json()
-                this.editItem["product_sale"] = res
-                this.addProductSaleItems()
-            }
-        },
-        async addProductSaleItems () {
-            const req = await fetch(process.env.HOST_BACK+"/register/addProductItems/", {
-                method: "POST",
-                body: JSON.stringify({
-                    company: localStorage.getItem("company"),
-                    company_worker: localStorage.getItem("user_id"),
-                    product_sale: this.editItem.product_sale,
-                    items: this.editItem.items,
-                }),
-                headers: { "Content-Type": "application/json"}
-            })
-            if (req.status == 200) {
-                this.dialog = false
-                this.editItem.items = []
+                this.editItem = res
                 this.reset()
                 this.$emit('getProductSale')
             }
@@ -201,61 +188,69 @@ export default {
             }else {
                 quantity = parseFloat(this.editItem.items.filter((i) => {return i.id == this.component})[0].quantity) + parseFloat(this.quantity)
             }
-            const req = await fetch(process.env.HOST_BACK+'/register/addProductItems/', {
-                method: "POST",
+            const req = await fetch(process.env.HOST_BACK+`/product/${this.editItem.id}/`, {
+                method: "PATCH",
                 body: JSON.stringify({
-                    company: localStorage.getItem("company"),
-                    company_worker: localStorage.getItem("user_id"),
-                    product_sale: this.editItem.id,
+                    company: this.$route.params.company,
                     items: [
                         {
-                            id: this.component,
+                            product: this.component,
                             quantity: quantity,
-                        },
-                    ],
+                        }
+                    ]
                 }),
-                headers: { "Content-Type": "application/json" },
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"
+                }),
             })
-            if (req.status == 200) {
-                this.$emit('editProduct', this.editItem.id)
+            console.log(this.editItem)
+            if (req.status == 201) {
+                const res = await req.json()
+                this.editItem.items = res.items
                 this.component = null
                 this.quantity = null
+                this.$emit("editDelProdLoadingTableItems")
             }
         },
-        async editDelItem (item) {
-            this.$emit("editDelProdLoadingTableItems")
-            const req = await fetch(process.env.HOST_BACK+'/register/deleteProductSale/', {
-                method: "POST",
+        async editDelItem (item, id) {
+            const req = await fetch(process.env.HOST_BACK+`/product/${id}/`, {
+                method: "DELETE",
                 body: JSON.stringify({
-                    company: localStorage.getItem("company"),
-                    token: localStorage.getItem('refresh'),
-                    type: 1,
-                    product: item.prod,
-                    product_item: item.prod_item
+                    company: this.$route.params.company,
+                    delete_type: 'pi',
+                    items: [
+                        {
+                            id: item.id,
+                            product: item.product
+                        }
+                    ]
                 }),
-                headers: { "content-type": "application/json" },
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"
+                }),
             })
             if (req.status == 200) {
                 this.editItem.items = this.editItem.items.filter((i) => {return i.id != item.id})
+                this.$emit("editDelProdLoadingTableItems")
             }
-            this.$emit("editDelProdLoadingTableItems")
         },
         async editNamePriceProd () {
-            let data = JSON.stringify({
-                company: localStorage.getItem("company"),
-                token: localStorage.getItem("refresh"),
-                id: this.editItem.id,
-                name: this.editItem.name,
-                price: this.editItem.price,
-                type: 2,
+            const req = await fetch(process.env.HOST_BACK+`/product/${this.editItem.id}/`,{
+                method: "PATCH",
+                body: JSON.stringify({
+                    company: this.$route.params.company,
+                    name: this.editItem.name,
+                    price: this.editItem.price,
+                }),
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"
+                }),
             })
-            const req = await fetch(process.env.HOST_BACK+'/register/editProduct/',{
-                method: "POST",
-                body: data,
-                headers: { "Content-Type": "application/json" },
-            })
-            if (req.status == 200) {
-
+            if (req.status == 201) {
+                this.$emit('editProduct', this.editItem.id)
             }
         },
     }

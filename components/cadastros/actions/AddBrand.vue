@@ -43,8 +43,7 @@ export default {
             dialog: false,
             valid: false,
             form: {
-                company: localStorage.getItem("company"),
-                company_worker: localStorage.getItem("user_id"),
+                company: this.$route.params.company,
                 brand: null,
             },
             rules: [
@@ -60,10 +59,12 @@ export default {
             this.validate();
             setTimeout(async () => {
                 if (this.valid != false) {
-                    const req = await fetch(process.env.HOST_BACK + "/register/addBrand/", {
+                    const req = await fetch(process.env.HOST_BACK + "/brand/", {
                         method: "POST",
                         body: JSON.stringify(this.form),
-                        headers: { "Content-Type": "application/json" },
+                        headers: new Headers({ 
+                            "Authorization": `Token ${localStorage.getItem('token')}`,
+                            "Content-Type": "application/json" }),
                     });
                     if (req.status == 200) {
                         this.dialog = false;

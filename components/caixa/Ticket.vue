@@ -20,7 +20,7 @@
                 </v-form>
             </v-card-text>
             <v-card-text style="grid-area: table;">
-                <v-data-table :headers="headers" :items="formItems.products" :items-per-page="-1" hide-default-footer class="elevation-1">
+                <v-data-table :headers="headers" :items="form.products" :items-per-page="-1" hide-default-footer class="elevation-1">
                     <template v-slot:item.actions="{ item }">
                         <v-icon small class="mr-2" @click="delItem(item)">mdi-delete</v-icon>
                     </template>
@@ -30,11 +30,11 @@
                 <v-btn fab small color="success" class="mb-4" @click="addSale">
                     <v-icon>mdi-check</v-icon>
                 </v-btn>
-                <v-btn v-if="sale_id"
+                <v-btn v-if="sale != null"
                     fab
                     small
                     color="primary"
-                    :href="host+'/sale/print/'+sale_id"
+                    :href="host+'/print/sale/'+sale"
                     target="_blank">
                     <v-icon>mdi-printer</v-icon>
                 </v-btn>
@@ -69,8 +69,8 @@ export default {
     },
     data () {
         return {
-            sale_id: null,
             totalSale: 0.0,
+            sale: null,
             host: process.env.HOST_BACK,
             valid: false,
             products: [],
@@ -79,17 +79,9 @@ export default {
             loadingSelect: false,
             loadingTable: false,
             form: {
-                company: localStorage.getItem("company"),
-                company_worker: localStorage.getItem("user_id"),
                 value: 0.0,
                 delivery: 0,
-                total: 0.0,
-            },
-            formItems: {
-                company: localStorage.getItem("company"),
-                company_worker: localStorage.getItem("user_id"),
-                sale: null,
-                products: [],
+                products: []
             },
             headersItem: [
                 { 
@@ -134,7 +126,7 @@ export default {
         },
         reset () {
             this.$refs.form.reset()
-            this.formItems.products = []
+            this.form.products = []
             this.totalSale = 0.0
         },
         addItem () {
@@ -144,64 +136,61 @@ export default {
                 price: null,
                 quantity: null,
             }
-            console.log(this.$refs.selectedItem.item)
-            if (this.formItems.products.filter((i) => {return i.id == this.$refs.selectedItem.item.id}).length == 0) {
+            if (this.form.products.filter((i) => {return i.id == this.$refs.selectedItem.item.id}).length == 0) {
                 let product = this.$refs.selectedItem.items.filter((i) => {return i.id == this.$refs.selectedItem.item.id})[0]
                 objItem["id"] = product.id
                 objItem["name"] = product.name
                 objItem["price"] = product.price
                 objItem["quantity"] = this.quantity
-                this.formItems.products.push(objItem)
+                this.form.products.push(objItem)
 
                 this.totalSale += parseFloat(product.price)*parseFloat(this.quantity)
             }
         },
         delItem (item) {
-            this.formItems.products = this.formItems.products.filter((i) => { return i.id != item.id })
+            this.form.products = this.form.products.filter((i) => { return i.id != item.id })
             this.totalSale -= parseFloat(item.price)*parseFloat(item.quantity)
         },
         async addSale () {
-            for (let i = 0; this.formItems.products.length > i; i++) {
-                this.form.value = parseFloat(this.form.value) + parseFloat(this.formItems.products[i].price)*parseFloat(this.formItems.products[i].quantity)
+            for (let i = 0; this.form.products.length > i; i++) {
+                this.form.value = parseFloat(this.form.value) + parseFloat(this.form.products[i].price)*parseFloat(this.form.products[i].quantity)
             }
-            this.form.total = this.form.value + this.form.delivery
-            const req = await fetch(process.env.HOST_BACK+"/sale/addSale/", {
+            const req = await fetch(process.env.HOST_BACK+"/sale/?"+ new URLSearchParams({
+                company: this.$route.params.company,
+            }), {
                 method: "POST",
                 body: JSON.stringify(this.form),
-                headers: { "Content-Type": "application/json" }
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"
+                })
             })
-            const res = await req.json()
-            this.formItems.sale = res
-            this.sale_id = res
-            if (req.status == 200) {
-                this.addSaleItems()
+            if (req.status == 201) {
+                const res = await req.json()
+                this.sale = res.sale
                 this.form.value = 0
                 this.form.total = 0
                 this.form.delivery = 0
-            }
-        },
-        async addSaleItems () {
-            const req = await fetch(process.env.HOST_BACK+"/sale/addSaleItems/", {
-                method: "POST",
-                body: JSON.stringify(this.formItems),
-                headers: { "Content-Type": "application/json" }
-            })
-            if (req.status == 200) {
                 this.reset()
             }
         },
         async getProduct () {
             this.loadingSelect = true
-            const req = await fetch(process.env.HOST_BACK+'/register/getProduct/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company'),
+            const req = await fetch(process.env.HOST_BACK+'/product/?'+new URLSearchParams({
+                company: this.$route.params.company,
                 type: 2,
             }), {
                 method: "GET",
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"
+                })
             })
-            const res = await req.json()
-            this.products = res
-            this.loadingSelect = false
+            if (req.status == 200) {
+                const res = await req.json()
+                this.products = res
+                this.loadingSelect = false
+            }
         },
     }
 }

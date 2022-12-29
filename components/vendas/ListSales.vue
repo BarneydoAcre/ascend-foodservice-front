@@ -6,20 +6,20 @@
                 <v-card-text>
                     <v-expansion-panels accordion>
                         <v-expansion-panel
-                        v-for="(item,i) in sales"
+                        v-for="(s,i) in sales"
                         :key="i">
                             <v-expansion-panel-header class="d-flex justify-space-around">
-                                <div>Venda: {{ item.id }}</div>  
-                                <div>Valor: {{ item.value}}</div>  
-                                <div>Entrega: {{ item.delivery }}</div> 
-                                <div>Total: {{ item.value+item.delivery }}</div>  
-                                <div>Data: {{ item.date }}</div>  
+                                <div>Venda: {{ s.sale }}</div>  
+                                <div>Valor: {{ s.value}}</div>  
+                                <div>Entrega: {{ s.delivery }}</div> 
+                                <div>Total: {{ s.value + s.delivery }}</div>  
+                                <div>Data: {{ s.created.split(' ')[0] }}</div>  
                                 <div class="d-flex justify-space-around">
                                     <v-btn
                                         fab
                                         small
                                         color="primary"
-                                        :href="host+'/sale/print/'+item.id"
+                                        :href="host+'/print/sale/'+s.sale"
                                         target="_blank">
                                         <v-icon>mdi-printer</v-icon>
                                     </v-btn> 
@@ -31,18 +31,17 @@
                                     </v-btn> 
                                     <DeleteSaleNotification 
                                     @getSale="$emit('getSale')"
-                                    :sale="item.id"></DeleteSaleNotification>
+                                    :sale="s.sale"></DeleteSaleNotification>
                                 </div>
                             </v-expansion-panel-header>
-                            <v-expansion-panel-content
-                            v-for="(salei,i) in saleItems.filter((i) => { return i.sale == item.id })"
+                            <v-expansion-panel-content v-for="(si,i) in s.products"
                             :key="i">
                                 <v-card>
                                     <v-card-text class="d-flex flex-row justify-space-between">
-                                        <div>Produto: {{ salei.product_id }}-{{ salei.product_name }}</div>  
-                                        <div>Valor: {{ salei.price }}</div>  
-                                        <div>Qtd.: {{ salei.quantity }}</div>   
-                                        <div>Total: {{ salei.price*salei.quantity }}</div>   
+                                        <div>Produto: {{ si.id }}-{{ si.name }}</div>  
+                                        <div>Valor: {{ si.price }}</div>  
+                                        <div>Qtd.: {{ si.quantity }}</div>   
+                                        <div>Total: {{ si.price*si.quantity }}</div>   
                                     </v-card-text>
                                 </v-card>
                             </v-expansion-panel-content>
@@ -60,7 +59,6 @@ export default {
     name: "ListSales",
     props: [
         "sales",
-        "saleItems",
     ],
     emits: [
         "getSale",

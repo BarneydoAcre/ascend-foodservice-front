@@ -41,18 +41,21 @@ export default {
     },
     methods: {
         async deleteSale(id) {
-            let data = JSON.stringify({
-                company: localStorage.getItem("company"),
-                token: localStorage.getItem("refresh"),
-                sale: id,
-            });
-            const req = await fetch(process.env.HOST_BACK + "/sale/deleteSale/", {
-                method: "POST",
-                body: data,
-                headers: { "Content-Type": "application/json" },
-            });
+            const req = await fetch(process.env.HOST_BACK + `/sale/${id}/?`+new URLSearchParams({
+                company: this.$route.params.company,
+                // company_worker: localStorage.getItem('user_id'),
+            }), {
+                method: "PATCH",
+                headers: new Headers({
+                    "Authorization": "Token "+localStorage.getItem('token'),
+                    "Content-Type": "application/json"
+                }),
+                body: JSON.stringify({
+                    canceled: true
+                })
+            })
             if (req.status == 200) {
-                this.dialog = false;
+                this.dialog = false
                 this.$emit('getSale')
             }
         }

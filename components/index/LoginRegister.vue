@@ -3,7 +3,7 @@
         <v-card height="100%">
 
             <div class="login-register-background">
-                <div v-if="statusLogin" class="login-register-button">
+                <div v-if="logged" class="login-register-button">
                     <a :href="$route.path+'#login-form'" @click="logout()" class="login">Sair</a>
                 </div>
                 <div v-else class="login-register-button">
@@ -17,15 +17,15 @@
                     <p class="form-title">Bem vindo ao Helpdesk</p>
                     <h6 v-show="messageLogin" class="form-title">{{ messageLogin }}</h6>
                     <div class="input-field">
-                        <label for="">Email</label>
-                        <input type="email" style="background: #d8d8d8;" v-model="formLogin.email">
+                        <label for="">Nome de Usuário</label>
+                        <input type="text" style="background: #d8d8d8;" v-model="formLogin.username">
                     </div>
                     <div class="input-field">
                         <div class="input-field-pass-label">
                             <label>Senha</label>
                             <a href="/accounts/restore-password/">Esqueceu sua senha?</a>
                         </div>
-                        <input type="password" style="background: #d8d8d8;" v-model="formLogin.password">
+                        <input type="password" style="background: #d8d8d8;" v-model="formLogin.password" @keyup.enter="login($event)">
                     </div>
                     <div class="input-field" style="flex-direction: row; justify-content: flex-start; align-items: center;">
                         <label class="switch">
@@ -65,7 +65,7 @@
                 <form id="company-form" class="modal">
                     <p class="form-title" style="text-align: center;">Escolha sua empresa!</p>
                     <div class="select-company">
-                        <v-btn v-for="d,i in companys" :key="i" :href="'/'+d.slug+'/dashboard/'" @click="setCompany(d.company_id, d.worker_id)">{{ d.company}}</v-btn>
+                        <v-btn v-for="c,i in companys" :key="c.id" :href="'/'+c.company.slug+'/dashboard/'">{{ c.company.company}}</v-btn>
                     </div>
                 </form>
                 
@@ -86,9 +86,10 @@ export default {
             messageLogin: null,
             messageRegister: null,
             companys: [],
-            statusLogin: false,
+            logged: false,
             formLogin: {
                 email: '',
+                username: '',
                 password: '',
             },
             formRegister: {
@@ -99,45 +100,31 @@ export default {
             },
         }
     },
+    mounted() {
+        window.location.href = ('/#login-form')
+    },
     methods: {
         reset () {
             this.$refs.form.reset()
         },
-        async verifyLogin () {
-            let token = {
-                token: localStorage.getItem('refresh')
-            }
-            const req = await fetch(process.env.HOST_BACK+'/auth/jwt/verify/', {
-                method: 'POST',
-                body: JSON.stringify(token),
-                headers: {'Content-Type': 'application/json'}
-            })
-            const res = await req
-            
-            if (req.status == 200) {
-                this.getCompany()
-                this.statusLogin = true
-                window.location.href = "/#company-form"
-            }
-        },
-        
         async login(e) {
             e.preventDefault()
-            const req = await fetch(process.env.HOST_BACK+'/default/auth/login/', {
-                method: 'POST',
-                body: JSON.stringify(this.formLogin),
-                headers: {'Content-Type': 'application/json'}
+            const req = await fetch(process.env.HOST_BACK+'/accounts/auth/', {
+                method: 'GET',
+                headers: new Headers({
+                    "Authorization": `Basic ${new Buffer(`${this.formLogin.username}:${this.formLogin.password}`).toString('Base64')}`,
+                }),
             })
             if (req.status == '200') {
                 const res = await req.json()
-                localStorage.setItem('access', res.login_token.access)
-                localStorage.setItem('refresh', res.login_token.refresh)
-                localStorage.setItem('user_id', res.user_id)              
-                localStorage.setItem('username', res.username)
-                localStorage.setItem('email', res.email)
-                
+                localStorage.setItem('token', res[0].key)
+                localStorage.setItem('user_id', res[0].user.id)
+                localStorage.setItem('username', res[0].user.username)
+                localStorage.setItem('email', res[0].user.email)
+                localStorage.setItem('first_name', res[0].user.first_name)
+                localStorage.setItem('last_name', res[0].user.last_name)
+                this.logged = true
                 this.getCompany()
-                this.verifyLogin()
                 window.location.href = ('/#company-form')
             }else {
                 this.validLogin = false;
@@ -145,8 +132,13 @@ export default {
                 this.messageLogin = 'Dados informados incorretos!'
             }
         },
+        logout () {
+            localStorage.clear()
+            this.logged = false
+            window.location.href = ('/#login-form')
+        },
         async register () {
-            const req = await fetch(process.env.HOST_BACK+'/auth/register/', {
+            const req = await fetch(process.env.HOST_BACK+'/accounts/register/', {
                 method: 'POST',
                 body: JSON.stringify(this.formRegister),
                 headers: {'Content-Type': 'application/json'},
@@ -156,33 +148,19 @@ export default {
                 this.reset()
             }
         },
-        logout () {
-            localStorage.setItem('access', '')
-            localStorage.setItem('refresh', '')
-            localStorage.setItem('user_id', '')
-            localStorage.setItem('username', '')
-            localStorage.setItem('email', '')
-            localStorage.setItem('company', '')
-            this.statusLogin = false
-        },
         async getCompany () {
-            let email = localStorage.getItem('email')
-            const req = await fetch(process.env.HOST_BACK+'/default/getCompany/?email='+email+'&token='+localStorage.getItem('refresh'), {
-                method: 'GET'
+            const req = await fetch(process.env.HOST_BACK+'/default/company_worker/', {
+                method: 'GET',
+                headers: new Headers({
+                    "Authorization": 'Token '+localStorage.getItem('token'),
+                })
             })
             if (req.status == '200') {
                 const res = await req.json()
                 this.companys = res
             }
         },
-        setCompany (company, worker) {
-            localStorage.setItem('company', company)
-            localStorage.setItem('user_id', worker)
-        }
     },
-    mounted () {
-        this.verifyLogin()
-    }
 }
 </script>
 

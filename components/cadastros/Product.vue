@@ -41,9 +41,6 @@ export default {
             loadingTable: false,
             edit: false,
             form: {
-                company: localStorage.getItem("company"),
-                company_worker: localStorage.getItem("user_id"),
-                token: localStorage.getItem("refresh"),
                 type: 1,
                 id: null,
                 name: null,
@@ -81,27 +78,32 @@ export default {
         },
         async getProduct () {
             this.loadingTable = true
-            const req = await fetch(process.env.HOST_BACK+'/register/getProduct/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company'),
+            const req = await fetch(process.env.HOST_BACK+'/product/?'+new URLSearchParams({
+                company: this.$route.params.company,
                 type: 1,
             }), {
                 method: "GET",
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                })
             })
-            const res = await req.json()
-            this.loadingTable = false
-            this.products = res
+            if (req.status == 200) {
+                const res = await req.json()
+                this.loadingTable = false
+                this.products = res
+            }
         },
         async deleteProduct (item) {
-            const req = await fetch(process.env.HOST_BACK+'/register/deleteProduct/', {
-                method: "POST",
+            const req = await fetch(process.env.HOST_BACK+`/product/${item.id}/`, {
+                method: "DELETE",
                 body: JSON.stringify({
-                    token: localStorage.getItem('refresh'),
-                    company: localStorage.getItem('company'),
-                    id: item.id,
-                    type: item.type,
+                    company: this.$route.params.company,
+                    delete_type: 'p',
                 }),
-                headers: {'Content-Type': 'application/json'},
+                headers: new Headers({
+                    'Authorization': `Token ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }),
             })
             if (req.status == 200) {
                 this.getProduct()

@@ -11,8 +11,8 @@
                 filled
                 dense
                 v-model="date"
-                label="Data Competência"
-                prepend-icon="mdi-calendar"
+                :label="mainLabel"
+                :prepend-icon="prependIcon"
                 readonly
                 v-bind="attrs"
                 v-on="on"
@@ -30,6 +30,17 @@
 <script>
 export default {
     name: 'DateField',
+    emits: ['changeEmit'],
+    props: {
+        mainLabel: {
+            type: String,
+            default: 'No Label'
+        },
+        prependIcon: {
+            type: String,
+            default: 'mdi-calendar'
+        }
+    },
     data: () => ({
         activePicker: null,
         date: null,
@@ -42,6 +53,7 @@ export default {
     },
     methods: {
         save (date) {
+            this.$emit('changeEmit')
             this.$refs.menu.save(date)
         },
     },

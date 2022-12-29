@@ -70,32 +70,23 @@ export default {
         async editProduct (id) {
             this.loadingTableItems = true
             this.edit = true
-            this.editItem = this.prodSale.filter((i) => { return i.id == id })[0]
-            const req = await fetch(process.env.HOST_BACK+'/register/getProductItems/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company'),
-                company_worker: localStorage.getItem('user_id'),
-                product: this.editItem.id,
-            }),{
-                method: "GET",
-            })
-            if (req.status == 200) {
-                const res = await req.json()
-                this.editItem["items"] = res
+            this.getProductSale()
+            setTimeout(() => {
+                this.editItem = this.prodSale.filter((i) => { return i.id == id })[0]
                 this.loadingTableItems = false
-            }
+            }, 1000)
         },
         async deleteProduct (id) {
             this.loadingTableList = true
-            const req = await fetch(process.env.HOST_BACK+'/register/deleteProductSale/?',{
-                method: "POST",
+            const req = await fetch(process.env.HOST_BACK+`/product/${id}`, {
+                method: "DELETE",
                 body: JSON.stringify({
-                    company: localStorage.getItem("company"),
-                    token: localStorage.getItem('refresh'),
-                    product: id,
-                    type: 2
+                    company: this.$route.params.company,
+                    delete_type: 'p'
                 }),
-                headers: { "Content-Type": "application/json"}
+                headers: new Headers({ 
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"})
             })
             if (req.status == 200) {
                 this.getProductSale()
@@ -104,13 +95,15 @@ export default {
         },
         async getProductSale () {
             this.loadingTableList = true
-            const req = await fetch(process.env.HOST_BACK+'/register/getProduct/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company'),
-                company_worker: localStorage.getItem('user_id'),
+            const req = await fetch(process.env.HOST_BACK+'/product/?'+new URLSearchParams({
+                company: this.$route.params.company,
                 type: 2,
             }), {
                 method: "GET",
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"
+                })
             })
             if (req.status == 200) {
                 const res = await req.json()
@@ -120,12 +113,15 @@ export default {
         },
         async getProduct () {
             this.loadingTableItems = true
-            const req = await fetch(process.env.HOST_BACK+'/register/getProduct/?'+new URLSearchParams({
-                token: localStorage.getItem('refresh'),
-                company: localStorage.getItem('company'),
+            const req = await fetch(process.env.HOST_BACK+'/product/?'+new URLSearchParams({
+                company: this.$route.params.company,
                 type: 1,
             }), {
                 method: "GET",
+                headers: new Headers({
+                    "Authorization": `Token ${localStorage.getItem('token')}`,
+                    "Content-Type": "application/json"
+                })
             })
             if (req.status == 200) {
                 const res = await req.json()

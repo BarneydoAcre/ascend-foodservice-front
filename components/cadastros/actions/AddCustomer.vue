@@ -110,7 +110,7 @@
                                     </v-col>
                                     <v-col cols="3"
                                     color="primary">
-                                        <v-text-field dense filled :loading="loadingSelect" @click="getCities" @keydown.enter="filterCity" label="Cidade" v-model="form.city.name"></v-text-field>
+                                        <v-text-field dense filled :loading="loadingSelect" @focus="getCities" @keydown.enter="filterCity" label="Cidade" v-model="form.city.name"></v-text-field>
                                     </v-col>
                                     <v-dialog v-model="dialogCity" max-width="45vw">
                                         <v-card>
@@ -292,9 +292,11 @@ export default {
             }), {
                 method: "GET",
             })
-            const res = await req.json()
-            this.cities = res
-            this.loadingSelect = false
+            if (req.status == 200) {
+                const res = await req.json()
+                this.cities = res
+                this.loadingSelect = false
+            }
         },
         filterCity () {
             if(this.form.city.name == null || this.form.city.name == '') {
