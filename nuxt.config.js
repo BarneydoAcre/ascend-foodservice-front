@@ -7,6 +7,16 @@ export default {
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
+    script: [
+      {
+        src: "https://code.highcharts.com/highcharts.js",
+        body: true,
+      },
+      {
+        src: "https://code.highcharts.com/modules/accessibility.js",
+        body: true,
+      },
+    ],
     titleTemplate: '%s - Ascend Project',
     title: 'FoodService',
     meta: [
